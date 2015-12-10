@@ -21,9 +21,9 @@ typedef SSIZE_T ssize_t;
 #endif
 
 #ifdef _WIN32
-#define PATH_SEPERATOR "\\"
+#define PATH_SEPARATOR "\\"
 #else
-#define PATH_SEPERATOR "/"
+#define PATH_SEPARATOR "/"
 #endif
 
 class printf_buffer_t;
@@ -194,7 +194,7 @@ static inline std::string time2str(const time_t &t) {
     const int TIMEBUF_SIZE = 26; // As specified in man 3 ctime and by MSDN
     char timebuf[TIMEBUF_SIZE];
 #ifdef _WIN32
-    errno_t ret = ctime_s(timebuf, sizeof timebuf, &t);
+    errno_t ret = ctime_s(timebuf, sizeof(timebuf), &t);
     guarantee_err(ret == 0, "time2str: invalid time");
     return timebuf;
 #else
@@ -230,8 +230,8 @@ serializer_filepath_t manual_serializer_filepath(const std::string& permanent_pa
 class serializer_filepath_t {
 public:
     serializer_filepath_t(const base_path_t& directory, const std::string& relative_path)
-        : permanent_path_(directory.path() + PATH_SEPERATOR + relative_path),
-          temporary_path_(directory.path() + PATH_SEPERATOR + TEMPORARY_DIRECTORY_NAME + PATH_SEPERATOR + relative_path + ".create") {
+        : permanent_path_(directory.path() + PATH_SEPARATOR + relative_path),
+          temporary_path_(directory.path() + PATH_SEPARATOR + TEMPORARY_DIRECTORY_NAME + PATH_SEPARATOR + relative_path + ".create") {
         guarantee(!relative_path.empty());
     }
 

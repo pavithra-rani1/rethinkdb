@@ -312,11 +312,7 @@ bool risfinite(double arg) {
 rng_t::rng_t(int seed) {
 #ifndef NDEBUG
     if (seed == -1) {
-#ifdef _MSC_VER
         seed = std::random_device{}();
-#else
-        seed = get_secs();
-#endif
     }
 #else
     seed = 314159;
@@ -601,10 +597,10 @@ std::string errno_string(int errsv) {
 #ifdef _MSC_VER
 
 int remove_directory_helper(const char *path) {
-    logNTC("In recursion: removing file %s\n", path);
+    logNTC("In recursion: removing file '%s'\n", path);
     DWORD attrs = GetFileAttributes(path);
     if (GetLastError() == ERROR_FILE_NOT_FOUND) {
-        logWRN("Trying to delete non-existent file `%s'", path);
+        logWRN("Trying to delete non-existent file '%s'", path);
         return 0;
     } else {
         guarantee_winerr(attrs != INVALID_FILE_ATTRIBUTES, "GetFileAttributes failed");
@@ -615,16 +611,14 @@ int remove_directory_helper(const char *path) {
     } else {
         res = DeleteFile(path);
     }
-    if (!res) {
-        crash("failed to remove: %s: %s", path, winerr_string(GetLastError()).c_str());
-    }
+    guarantee_winerr(res, "failed to remove: '%s': %s", path, winerr_string(GetLastError()).c_str());
     return 0;
 }
 
 #else
 
 int remove_directory_helper(const char *path, UNUSED const struct stat *, UNUSED int, UNUSED struct FTW *) {
-    logNTC("In recursion: removing file %s\n", path);
+    logNTC("In recursion: removing file '%s'\n", path);
     int res = ::remove(path);
     guarantee_err(res == 0, "Fatal error: failed to delete '%s'.", path);
     return 0;
@@ -645,8 +639,11 @@ void remove_directory_recursive(const char *dirpath) {
     guarantee_err(res == 0 || get_errno() == ENOENT, "Trouble while traversing and destroying temporary directory %s.", dirpath);
 #else
     using namespace std::tr2;
-    auto go = [](sys::path dir){
+    std::function<void(sys::path)> go = [go](sys::path dir){
         for (auto it : sys::directory_iterator(dir)) {
+            if (sys::is_directory(it.status())) {
+                go(it.path());
+            }
             remove_directory_helper(it.path().string().c_str());
         }
         remove_directory_helper(dir.string().c_str());
@@ -665,9 +662,9 @@ void base_path_t::make_absolute() {
     path_.assign(absolute_path);
 #else
     char absolute_path[MAX_PATH];
-    DWORD size = GetFullPathName(path_.c_str(), sizeof absolute_path, absolute_path, NULL);
+    DWORD size = GetFullPathName(path_.c_str(), sizeof(absolute_path), absolute_path, NULL);
     guarantee_winerr(size != 0, "GetFullPathName failed");
-    if (size < sizeof absolute_path) {
+    if (size < sizeof(absolute_path)) {
       path_.assign(absolute_path);
       return;
     }
