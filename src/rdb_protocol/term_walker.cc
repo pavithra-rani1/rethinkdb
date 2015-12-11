@@ -74,7 +74,7 @@ private:
                 rcheck_src(bt, size >= 1 && size <= 3, base_exc_t::LOGIC,
                     strprintf("Expected between 1 and 3 elements in a raw term, "
                               "but found %zu.", size));
-                        
+
                 if (size >= 1) {
                     rapidjson::Value *val = &(*src)[0];
                     rcheck_src(bt, val->IsNumber(), base_exc_t::LOGIC,
@@ -144,7 +144,7 @@ private:
             if (args != nullptr) {
                 r_sanity_check(args->IsArray());
                 for (size_t i = 0; i < args->Size(); ++i) {
-                    backtrace_id_t child_bt 
+                    backtrace_id_t child_bt
                         = make_bt(bt, datum_t(static_cast<double>(i)));
                     walker_frame_t child_frame(parent, i == 0, this);
                     call_with_enough_stack([&]() {
@@ -231,6 +231,7 @@ bool term_type_is_valid(Term::TermType type) {
     case Term::RECONFIGURE:
     case Term::REBALANCE:
     case Term::SYNC:
+    case Term::GRANT:
     case Term::INDEX_CREATE:
     case Term::INDEX_DROP:
     case Term::INDEX_WAIT:
@@ -416,6 +417,7 @@ bool term_is_write_or_meta(Term::TermType type) {
     case Term::RECONFIGURE:
     case Term::REBALANCE:
     case Term::SYNC:
+    case Term::GRANT:
     case Term::INDEX_CREATE:
     case Term::INDEX_DROP:
     case Term::INDEX_WAIT:
@@ -681,6 +683,7 @@ bool term_forbids_writes(Term::TermType type) {
     case Term::RECONFIGURE:
     case Term::REBALANCE:
     case Term::SYNC:
+    case Term::GRANT:
     case Term::INDEX_CREATE:
     case Term::INDEX_DROP:
     case Term::INDEX_LIST:

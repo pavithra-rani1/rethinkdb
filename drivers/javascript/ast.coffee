@@ -351,6 +351,8 @@ class RDBVal extends TermBase
 
     sync: (args...) -> new Sync {}, @, args...
 
+    grant: (args...) -> new Grant {}, @, args...
+
     toISO8601: (args...) -> new ToISO8601 {}, @, args...
     toEpochTime: (args...) -> new ToEpochTime {}, @, args...
     inTimezone: (args...) -> new InTimezone {}, @, args...
@@ -965,6 +967,10 @@ class Sync extends RDBOp
     tt: protoTermType.SYNC
     mt: 'sync'
 
+class Grant extends RDBOp
+    tt: protoTermType.GRANT
+    mt: 'grant'
+
 class FunCall extends RDBOp
     tt: protoTermType.FUNCALL
     st: 'do' # This is only used by the `undefined` argument checker
@@ -1247,6 +1253,8 @@ rethinkdb.tableList = (args...) -> new TableList {}, args...
 rethinkdb.wait = aropt (opts) -> new Wait opts
 rethinkdb.reconfigure = (opts) -> new Reconfigure opts
 rethinkdb.rebalance = () -> new Rebalance {}
+
+rethinkdb.grant = (args...) -> new Grant {}, args...
 
 rethinkdb.do = varar 1, null, (args...) ->
     new FunCall {}, funcWrap(args[-1..][0]), args[...-1]...
