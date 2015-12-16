@@ -68,7 +68,7 @@ public:
     double randdouble();
 
 #ifndef _WIN32
-    typedef std::array<unsigned short, 3> state_t;
+    typedef std::array<uint16_t, 3> state_t;
 #else
     typedef std::ranlux48 state_t;
 #endif
@@ -76,7 +76,7 @@ public:
     explicit rng_t(int seed);
     rng_t() : rng_t(-1) { }
     rng_t(rng_t&&) = default;
-    rng_t(const state_t& s) : state(s) { };
+    explicit rng_t(const state_t& s) : state(s) { }
 private:
     state_t state;
     DISABLE_COPYING(rng_t);

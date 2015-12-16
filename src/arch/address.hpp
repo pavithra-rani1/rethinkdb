@@ -10,7 +10,7 @@
 #include <sys/ioctl.h>
 #else
 #include "windows.hpp"
-#include <inaddr.h>
+#include <inaddr.h> // NOLINT
 #endif
 
 #include <algorithm>

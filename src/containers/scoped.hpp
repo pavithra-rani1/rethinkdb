@@ -230,7 +230,7 @@ private:
 template<class T>
 class copyable_unique_t {
 public:
-    copyable_unique_t(T&& x)
+    explicit copyable_unique_t(T&& x)
         : it(std::move(x)) { }
     copyable_unique_t(const copyable_unique_t<T> &other)
         : it(std::move(other.it)) { }
@@ -284,7 +284,7 @@ public:
     }
 
     template <class U>
-    scoped_alloc_t(copyable_unique_t<U> other) noexcept {
+    explicit scoped_alloc_t(copyable_unique_t<U> other) noexcept {
         scoped_alloc_t tmp(other.release());
         swap(tmp);
     }
@@ -316,7 +316,7 @@ protected:
 private:
     friend class released_t;
 
-    scoped_alloc_t(void*) = delete;
+    explicit scoped_alloc_t(void*) = delete;
 
     void swap(scoped_alloc_t &other) noexcept {
         T *tmp = ptr_;
@@ -341,7 +341,7 @@ void *raw_malloc_aligned(size_t size) {
 #define TEMPLATE_ALIAS(type_t, ...)                                     \
     struct type_t : public __VA_ARGS__ {                                \
         template <class ... arg_ts>                                     \
-        type_t(arg_ts&&... args) :                                      \
+        type_t(arg_ts&&... args) : /* NOLINT */                         \
             __VA_ARGS__(std::forward<arg_ts>(args)...) { }              \
     }
 

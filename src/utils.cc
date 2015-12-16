@@ -16,15 +16,14 @@
 
 #ifdef _WIN32
 #include "windows.hpp"
-#include <io.h>
-#include <direct.h>
-#include <random>
+#include <io.h>     // NOLINT
+#include <direct.h> // NOLINT
+#include <random>   // NOLINT
 #ifndef __MINGW32__
 #include <filesystem>
 #endif
 #else
 #include <sys/time.h>
-#include <sys/types.h>
 #include <sys/resource.h>
 #include <ftw.h>
 #endif
@@ -331,7 +330,7 @@ int rng_t::randint(int n) {
 #ifndef _WIN32
     long x = nrand48(state.data());  // NOLINT(runtime/int)
 #else
-    unsigned long x = state();
+    unsigned long x = state(); // NOLINT(runtime/int)
 #endif
     return x % static_cast<unsigned int>(n);
 }
@@ -638,7 +637,7 @@ void remove_directory_recursive(const char *dirpath) {
     int res = nftw(dirpath, remove_directory_helper, max_openfd, FTW_PHYS | FTW_MOUNT | FTW_DEPTH);
     guarantee_err(res == 0 || get_errno() == ENOENT, "Trouble while traversing and destroying temporary directory %s.", dirpath);
 #else
-    using namespace std::tr2;
+    using namespace std::tr2; // NOLINT
     std::function<void(sys::path)> go = [go](sys::path dir){
         for (auto it : sys::directory_iterator(dir)) {
             if (sys::is_directory(it.status())) {

@@ -64,9 +64,9 @@
     <ClInclude Include="precompiled\proto\rdb_protocol\ql2.pb.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="precompiled\web_assets\web_assets.cc" />
     <ClCompile Include="src\**\*.cc" />
     <ClCompile Include="precompiled\proto\rdb_protocol\ql2.pb.cc" />
-    <ClCompile Include="precompiled\web_assets\web_assets.cc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\rdb_protocol\ql2.proto" />

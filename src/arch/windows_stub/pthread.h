@@ -1,5 +1,5 @@
-#ifndef ARCH_WINDOWS_STUB_PTHREAD_H_
-#define ARCH_WINDOWS_STUB_PTHREAD_H_
+#ifndef SRC_ARCH_WINDOWS_STUB_PTHREAD_H_
+#define SRC_ARCH_WINDOWS_STUB_PTHREAD_H_
 
 // An implementation of a subset of pthread for windows
 
@@ -34,4 +34,4 @@ const bool PTHREAD_ONCE_INIT = false;
 const bool PTHREAD_ONCE_COMPLETED = true;
 int pthread_once(bool *, void(*)(void));
 
-#endif
+#endif  // SRC_ARCH_WINDOWS_STUB_PTHREAD_H_
