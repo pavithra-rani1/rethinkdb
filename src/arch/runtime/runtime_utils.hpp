@@ -8,15 +8,15 @@
 #include "config/args.hpp"
 #include "containers/intrusive_list.hpp"
 
-#ifndef _WIN32
-
-typedef int fd_t;
-#define INVALID_FD fd_t(-1)
-
-#else
+#ifdef _WIN32
 
 typedef HANDLE fd_t;
 #define INVALID_FD INVALID_HANDLE_VALUE
+
+#else
+
+typedef int fd_t;
+#define INVALID_FD fd_t(-1)
 
 #endif
 

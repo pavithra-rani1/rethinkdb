@@ -422,19 +422,19 @@ bool fallback_log_writer_t::write(const log_message_t &msg, std::string *error_o
     if (msg.level != log_level_info) {
         // Write to stdout/stderr for all log levels but info (#3040)
         std::string console_formatted = format_log_message(msg, true) + "\n";
-#ifndef _WIN32
-        flockfile(write_stream);
-#else
+#ifdef _WIN32
         // WINDOWS TODO
         (void) write_stream;
+#else
+        flockfile(write_stream);
 #endif
 
 #ifndef _WIN32
-        ssize_t write_res = ::write(fileno, console_formatted.data(), console_formatted.length());
-#else
         // WINDOWS TODO: use fileno
         (void) fileno;
         size_t write_res = fwrite(console_formatted.data(), 1, console_formatted.length(), stderr);
+#else
+        ssize_t write_res = ::write(fileno, console_formatted.data(), console_formatted.length());
 #endif
         if (write_res != static_cast<ssize_t>(console_formatted.length())) {
             error_out->assign("cannot write to stdout/stderr: " + errno_string(get_errno()));

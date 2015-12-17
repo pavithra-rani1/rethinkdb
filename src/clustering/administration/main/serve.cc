@@ -612,7 +612,7 @@ bool do_serve(io_backender_t *io_backender,
                                stop_cond->get_source_pid(), stop_cond->get_source_uid());
                     }
 #endif
-				}
+                }
 
                 cond_t non_interruptor;
                 if (i_am_a_server) {

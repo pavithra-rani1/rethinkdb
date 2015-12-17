@@ -67,10 +67,10 @@ public:
     uint64_t randuint64(uint64_t n);
     double randdouble();
 
-#ifndef _WIN32
-    typedef std::array<uint16_t, 3> state_t;
-#else
+#ifdef _WIN32
     typedef std::ranlux48 state_t;
+#else
+    typedef std::array<uint16_t, 3> state_t;
 #endif
 
     explicit rng_t(int seed);
