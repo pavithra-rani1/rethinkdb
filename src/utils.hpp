@@ -9,7 +9,8 @@
 #include <functional>
 #include <string>
 
-#include <boost/optional.hpp> // NOLINT
+#include "errors.hpp"
+#include <boost/optional.hpp>
 
 #include "debug.hpp"
 #include "arch/compiler.hpp"
