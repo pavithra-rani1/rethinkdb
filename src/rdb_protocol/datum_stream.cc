@@ -753,11 +753,13 @@ std::vector<rget_item_t> intersecting_reader_t::do_intersecting_read(
 
 readgen_t::readgen_t(
     global_optargs_t _global_optargs,
+    boost::optional<auth::username_t> username,
     std::string _table_name,
     profile_bool_t _profile,
     read_mode_t _read_mode,
     sorting_t _sorting)
     : global_optargs(std::move(_global_optargs)),
+      m_username(std::move(username)),
       table_name(std::move(_table_name)),
       profile(_profile),
       read_mode(_read_mode),
@@ -765,14 +767,19 @@ readgen_t::readgen_t(
 
 rget_readgen_t::rget_readgen_t(
     global_optargs_t _global_optargs,
+    boost::optional<auth::username_t> username,
     std::string _table_name,
     const datumspec_t &_datumspec,
     profile_bool_t _profile,
     read_mode_t _read_mode,
     sorting_t _sorting)
-    : readgen_t(std::move(_global_optargs),
-                std::move(_table_name),
-                _profile, _read_mode, _sorting),
+    : readgen_t(
+        std::move(_global_optargs),
+        std::move(username),
+        std::move(_table_name),
+        _profile,
+        _read_mode,
+        _sorting),
       datumspec(_datumspec) { }
 
 read_t rget_readgen_t::next_read(
@@ -813,6 +820,7 @@ read_t rget_readgen_t::terminal_read(
 
 primary_readgen_t::primary_readgen_t(
     global_optargs_t global_optargs,
+    boost::optional<auth::username_t> username,
     std::string table_name,
     const datumspec_t &datumspec,
     profile_bool_t _profile,
@@ -820,6 +828,7 @@ primary_readgen_t::primary_readgen_t(
     sorting_t sorting)
     : rget_readgen_t(
         std::move(global_optargs),
+        std::move(username),
         std::move(table_name),
         datumspec,
         _profile,
@@ -905,6 +914,7 @@ scoped_ptr_t<readgen_t> primary_readgen_t::make(
     return scoped_ptr_t<readgen_t>(
         new primary_readgen_t(
             env->get_all_optargs(),
+            env->get_username(),
             std::move(table_name),
             datumspec,
             env->profile(),
@@ -928,6 +938,7 @@ rget_read_t primary_readgen_t::next_read_impl(
         active_ranges_to_hints(sorting(batchspec), active_ranges),
         store_keys,
         global_optargs,
+        m_username,
         table_name,
         batchspec,
         std::move(transforms),
@@ -960,6 +971,7 @@ changefeed::keyspec_t::range_t primary_readgen_t::get_range_spec(
 
 sindex_readgen_t::sindex_readgen_t(
     global_optargs_t global_optargs,
+    boost::optional<auth::username_t> username,
     std::string table_name,
     const std::string &_sindex,
     const datumspec_t &datumspec,
@@ -968,6 +980,7 @@ sindex_readgen_t::sindex_readgen_t(
     sorting_t sorting)
     : rget_readgen_t(
         std::move(global_optargs),
+        std::move(username),
         std::move(table_name),
         datumspec,
         _profile,
@@ -986,6 +999,7 @@ scoped_ptr_t<readgen_t> sindex_readgen_t::make(
     return scoped_ptr_t<readgen_t>(
         new sindex_readgen_t(
             env->get_all_optargs(),
+            env->get_username(),
             std::move(table_name),
             sindex,
             datumspec,
@@ -1037,6 +1051,7 @@ rget_read_t sindex_readgen_t::next_read_impl(
         active_ranges_to_hints(sorting(batchspec), active_ranges),
         boost::none,
         global_optargs,
+        m_username,
         table_name,
         batchspec,
         std::move(transforms),
@@ -1061,14 +1076,19 @@ changefeed::keyspec_t::range_t sindex_readgen_t::get_range_spec(
 
 intersecting_readgen_t::intersecting_readgen_t(
     global_optargs_t global_optargs,
+    boost::optional<auth::username_t> username,
     std::string table_name,
     const std::string &_sindex,
     const datum_t &_query_geometry,
     profile_bool_t _profile,
     read_mode_t _read_mode)
-    : readgen_t(std::move(global_optargs),
-                std::move(table_name),
-                _profile, _read_mode, sorting_t::UNORDERED),
+    : readgen_t(
+        std::move(global_optargs),
+        std::move(username),
+        std::move(table_name),
+        _profile,
+        _read_mode,
+        sorting_t::UNORDERED),
       sindex(_sindex),
       query_geometry(_query_geometry) { }
 
@@ -1081,6 +1101,7 @@ scoped_ptr_t<readgen_t> intersecting_readgen_t::make(
     return scoped_ptr_t<readgen_t>(
         new intersecting_readgen_t(
             env->get_all_optargs(),
+            env->get_username(),
             std::move(table_name),
             sindex,
             query_geometry,
@@ -1133,6 +1154,7 @@ intersecting_geo_read_t intersecting_readgen_t::next_read_impl(
         std::move(stamp),
         region_t::universe(),
         global_optargs,
+        m_username,
         table_name,
         batchspec,
         std::move(transforms),
@@ -1709,6 +1731,7 @@ union_datum_stream_t::union_datum_stream_t(
         env->return_empty_normal_batches,
         drainer.get_drain_signal(),
         env->get_all_optargs(),
+        env->get_username(),
         trace.has() ? trace.get() : nullptr);
 
     coro_streams.reserve(streams.size());
