@@ -11,13 +11,11 @@
 #include "config/args.hpp"
 
 int main(int argc, char *argv[]) {
-#ifndef NDEBUG
-#ifndef _WIN32
+#if !defined(NDEBUG) && !defined(_WIN32)
     rlimit core_limit;
     core_limit.rlim_cur = 100 * MEGABYTE;
     core_limit.rlim_max = 200 * MEGABYTE;
     setrlimit(RLIMIT_CORE, &core_limit);
-#endif
 #endif
 
     startup_shutdown_t startup_shutdown;

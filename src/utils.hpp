@@ -8,7 +8,8 @@
 #include <array>
 #include <functional>
 #include <string>
-#include <boost/optional.hpp>
+
+#include <boost/optional.hpp> // NOLINT
 
 #include "debug.hpp"
 #include "arch/compiler.hpp"
